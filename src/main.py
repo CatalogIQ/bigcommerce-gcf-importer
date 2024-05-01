@@ -9,7 +9,7 @@ from sendgrid.helpers.mail import Mail
 from google.cloud import pubsub_v1
 
 publisher = pubsub_v1.PublisherClient()
-topic_path = publisher.topic_path('bitnami-ttqjdimqca', 'demo-bigcommerce-function')
+topic_path = publisher.topic_path('project-name', 'topic-id')
 
 def publish_offset(offset):
     """Publish the updated offset to the Pub/Sub topic."""
