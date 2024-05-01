@@ -29,9 +29,9 @@ def sync_products(offset):
     limit = 1
 
     # Retrieve API keys and endpoints
-    catalogiq_api_key = '8df23741d7f313b4b44eec5720c9b1b369fc26ba' #os.getenv('CATALOGIQ_API_KEY', 'default_catalogiq_key')
-    bigcommerce_api_key = '7ms6cr2e12nuu72873rb16kur89x6ko' #os.getenv('BIGCOMMERCE_API_KEY', 'default_bigcommerce_key')
-    bigcommerce_store_hash = 'lx5sxeowlz' #os.getenv('BIGCOMMERCE_STORE_HASH', 'default_store_hash')
+    catalogiq_api_key = os.getenv('CATALOGIQ_API_KEY', 'default_catalogiq_key')
+    bigcommerce_api_key = os.getenv('BIGCOMMERCE_API_KEY', 'default_bigcommerce_key')
+    bigcommerce_store_hash = os.getenv('BIGCOMMERCE_STORE_HASH', 'default_store_hash')
     catalogiq_endpoint = "https://catalogiq.app/api/v1/products"
     bigcommerce_endpoint = f"https://api.bigcommerce.com/stores/{bigcommerce_store_hash}/v3/catalog/products"
 
