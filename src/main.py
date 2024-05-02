@@ -110,10 +110,14 @@ def map_catalogiq_to_bigcommerce(product):
         })    
 
     return {
+        # Names are unique in BigCommerce so we can append the model, vendor id or other string such as the Vendor Name to make sure the name is unique in the catalog.
         "name": product['name'] + ' by ' + attributes.get('Vendor Name', ''),
         "type": "physical",
+        #The SKU number for the product, this should be unique for each product in the catalog. We are using the model and vendor id to create a unique SKU for the parent item. You can modify this to fit your needs.
         "sku": product['model'] + '-' + product['vendor_id'],
         "description": "<p>{}</p>".format(product.get('description_sale', 'No description available.')),
+        # Add the brand ID from BigCommerce if you have a brand mapping
+        "brand_id": 0,  
         # Check the field types and developer note in the product_attributes endpoint to determine what filtering needs to be done on your properties.abs
         # We are using the clean_and_convert_to_float function to ensure that the values are converted to floats and remove and units. In product we would want to check the units are what we are expecting for BigCommerce.
         "weight": clean_and_convert_to_float(attributes.get('Weight', 0)),
@@ -136,6 +140,8 @@ def clean_and_convert_to_float(input_value):
         return float(cleaned_string) if cleaned_string else 0.0
     else:
         return 0.00
+
+        
 # Callback at the end of the synchronization process to send an email notification
 # You can change this to handle whatever you would like to do upon completion.
 def send_completion_email():
