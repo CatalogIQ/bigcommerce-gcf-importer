@@ -8,6 +8,10 @@ from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail
 from google.cloud import pubsub_v1
 
+"""
+This function is designed to synchronize products from CatalogIQ to BigCommerce. It is offered as an example. You actual implementation will vary. There are warranty or guarantees provided with this code. It is provided as an example to help you get started with your own implementation.
+"""
+
 publisher = pubsub_v1.PublisherClient()
 # Add your project name and topic ID to the topic_path variable.
 topic_path = publisher.topic_path('project-name', 'topic-id')
@@ -27,6 +31,8 @@ def process_product(cloud_event):
     offset = int(data['offset'])
     sync_products(offset)
 
+# Function to synchronize products from CatalogIQ to BigCommerce. 
+# If the product name and/or SKU is already present it will skip the product.
 def sync_products(offset):
     limit = 1
 
@@ -90,7 +96,7 @@ def map_catalogiq_to_bigcommerce(product):
         "sale_price": 0,
         "retail_price": 0,
         "option_values": [
-            {
+            {   
                 "option_display_name": attr['name'],
                 "label": attr['value']
             } for attr in variant['attributes']
@@ -106,6 +112,7 @@ def map_catalogiq_to_bigcommerce(product):
     # Add the main_image as the first image
     if product.get('main_image'):
         images.insert(0, {
+            # We are resizing the image to 1000px along the longest side to ensure that the image is not too large for BigCommerce.
             "image_url": product['main_image'] + '/1000x1000',
             "is_thumbnail": True
         })    
