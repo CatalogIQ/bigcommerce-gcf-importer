@@ -34,6 +34,7 @@ def sync_products(offset):
     catalogiq_api_key = os.getenv('CATALOGIQ_API_KEY', 'default_catalogiq_key')
     bigcommerce_api_key = os.getenv('BIGCOMMERCE_API_KEY', 'default_bigcommerce_key')
     bigcommerce_store_hash = os.getenv('BIGCOMMERCE_STORE_HASH', 'default_store_hash')
+    sendgrid_api_key = os.getenv('SENDGRID_API_KEY')
 
     catalogiq_endpoint = "https://catalogiq.app/api/v1/products"
     bigcommerce_endpoint = f"https://api.bigcommerce.com/stores/{bigcommerce_store_hash}/v3/catalog/products"
@@ -46,7 +47,7 @@ def sync_products(offset):
     response_catalogiq = requests.get(f"{catalogiq_endpoint}?limit={limit}&offset={offset}", headers=headers_catalogiq)
     if response_catalogiq.status_code != 200:
         print(f"Error fetching product from CatalogIQ: {response_catalogiq.status_code} - {response_catalogiq.text}")
-        return  # Consider adding error handling here
+        return  # Consider adding error handling here, this will stop the function and not call the next record if there is an error. Monitor the logs for errors.
 
     product_data = response_catalogiq.json()
     products = product_data['results']
@@ -54,7 +55,7 @@ def sync_products(offset):
     # If there are no results from the API, we have reached the end of the catalog
     if not products:
         # Placeholder for any callback that you want to handle when the sync is complete
-        send_completion_email()
+        send_completion_email(sendgrid_api_key)
         return "Sync Complete!"
 
     # Map the API properties and Post products to BigCommerce
@@ -141,13 +142,13 @@ def clean_and_convert_to_float(input_value):
     else:
         return 0.00
 
-        
+
 # Callback at the end of the synchronization process to send an email notification
 # You can change this to handle whatever you would like to do upon completion.
-def send_completion_email():
-    sendgrid_api_key = os.getenv('SENDGRID_API_KEY')
+def send_completion_email(sendgrid_api_key):
+    
     message = Mail(
-        from_email='your-email@example.com',
+        from_email='info@catalogiq.app',
         to_emails='notify@catalogiq.app',
         subject='Brand Completed',
         html_content='The synchronization process for your products has been completed successfully.'
@@ -157,4 +158,4 @@ def send_completion_email():
         response = sg.send(message)
         print(f"Email sent! Status code: {response.status_code}")
     except Exception as e:
-        print(f"An error occurred: {e}")
+        print(f"An error sending mail occurred: {e}")
