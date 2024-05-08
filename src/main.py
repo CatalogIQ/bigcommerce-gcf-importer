@@ -9,6 +9,13 @@ from sendgrid.helpers.mail import Mail
 from google.cloud import pubsub_v1
 
 """
+Google Cloud Function triggered by a Pub/Sub message.
+Pub/Sub Message Schema: {'offset': int}
+Function Entry Point: main
+Example by: https://catalogiq.app
+Source: https://catalogiq.app/api/v1/products
+Destination: BigCommerce Catalog API
+
 This function is designed to synchronize products from CatalogIQ to BigCommerce. It is offered as an example. You actual implementation will vary. There are warranty or guarantees provided with this code. It is provided as an example to help you get started with your own implementation.
 """
 
